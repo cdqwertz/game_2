@@ -27,6 +27,18 @@ function load() {
 	canvas.height = window.innerHeight;
 	lanes_2_y = -canvas.height;
 
+	canvas.onmousedown = function(event) {
+		if(state == 0) {
+			state = 1;
+		} else {
+			if(event.pageX > canvas.width/2) {
+				move_right();
+			} else {
+				move_left();
+			}
+		}
+	}
+
 	ctx = canvas.getContext("2d");
 
 	window.requestAnimationFrame(update);
@@ -39,8 +51,8 @@ function update(t) {
 
 	if(state == 1) {
 		ctx.lineWidth = 2;
-		ctx.strokeStyle = "#666";
-		ctx.fillStyle = "#666";
+		ctx.strokeStyle = "#333";
+		ctx.fillStyle = "#333";
 
 		var w = (canvas.width/lanes_1.length);
 		var h = (canvas.height/lanes_1[0].length)
@@ -147,24 +159,32 @@ function check_line(lane, y, h, p, r) {
 	return false;
 }
 
+function move_left() {
+	if(player_pos > 0) {
+		player_pos -= 1;
+	} else {
+		player_pos = lanes_1.length-1;
+	}
+}
+
+function move_right() {
+	if(player_pos < lanes_1.length-1) {
+		player_pos += 1;
+	} else {
+		player_pos = 0;
+	}
+}
+
 document.onkeydown = function(event) {
 	if(state == 0) {
 		state = 1;
 	} else {
 		if(event.keyCode == 37) {
-			if(player_pos > 0) {
-				player_pos -= 1;
-			} else {
-				player_pos = lanes_1.length-1;
-			}
+			move_left();
 		}
 
 		if(event.keyCode == 39) {
-			if(player_pos < lanes_1.length-1) {
-				player_pos += 1;
-			} else {
-				player_pos = 0;
-			}
+			move_right();
 		}
 	}
 }
