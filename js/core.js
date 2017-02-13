@@ -190,12 +190,21 @@ function randomize_lanes(lanes) {
 		if(Math.random() > 0.8) {
 			x += 1;
 			if(x > lanes.length-1) {
-				x = 0;
+				if(score > 40000) {
+					x = 0;
+					console.log("hi");
+				} else {
+					x -= 2;
+				}
 			}
 		} else if(Math.random() > 0.8) {
 			x -= 1;
 			if(x < 0) {
-				x = lanes.length-1;
+				if(score > 40000) {
+					x = lanes.length-1;
+				} else {
+					x += 2;
+				}
 			}
 		}
 
