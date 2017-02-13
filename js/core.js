@@ -8,6 +8,7 @@ var lanes_2_y = 0;
 var player_pos = 1;
 var power = 100;
 var state = 0;
+var score = 0;
 
 var time = new function() {
 	this.time = 0;
@@ -47,9 +48,16 @@ function load() {
 function update(t) {
 	time.update(t);
 
+	if(time.delta > 200) {
+		window.requestAnimationFrame(update);
+		return;
+	}
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	if(state == 1) {
+		score += time.delta;
+
 		ctx.lineWidth = 2;
 		ctx.strokeStyle = "#333";
 		ctx.fillStyle = "#333";
@@ -57,9 +65,11 @@ function update(t) {
 		var w = (canvas.width/lanes_1.length);
 		var h = (canvas.height/lanes_1[0].length)
 
-		lanes_1_y += time.delta/3;
-		lanes_2_y += time.delta/3;
+		//move lanes
+		lanes_1_y += time.delta * 0.3;
+		lanes_2_y += time.delta * 0.3;
 
+		//teleport lanes
 		if(lanes_1_y > canvas.height) {
 			lanes_1_y -= canvas.height * 2;
 			//lanes_1_y = -canvas.height;
@@ -72,12 +82,48 @@ function update(t) {
 			randomize_lanes(lanes_2);
 		}
 
+		//draw lanes
 		draw_lanes(lanes_1, w, h, lanes_1_y);
 		draw_lanes(lanes_2, w, h, lanes_2_y);
 
+		//draw player
 		ctx.lineWidth = 1;
-
 		ctx.fillRect(w*player_pos + w/2 - 15, canvas.height/6*5, 30, 30);
+
+		//draw arrows
+		if(score < 1000) {
+			var arrows_y = canvas.height/3;
+
+			with(ctx) {
+				strokeStyle = "#ccc"
+				lineWidth = 8;
+				lineCap = "round";
+				beginPath();
+				moveTo(canvas.width/2 + w/2, canvas.height/2 + arrows_y);
+				lineTo(canvas.width/2 + w, canvas.height/2 + arrows_y);
+				stroke();
+
+				beginPath();
+				moveTo(canvas.width/2 + w, canvas.height/2 + arrows_y);
+				lineTo(canvas.width/2 + w - w/12, canvas.height/2 - w/12 + arrows_y);
+				moveTo(canvas.width/2 + w, canvas.height/2 + arrows_y);
+				lineTo(canvas.width/2 + w - w/12, canvas.height/2 + w/12 + arrows_y);
+				stroke();
+
+
+				beginPath();
+				moveTo(canvas.width/2 - w/2, canvas.height/2 + arrows_y);
+				lineTo(canvas.width/2 - w, canvas.height/2 + arrows_y);
+				stroke();
+
+				beginPath();
+				moveTo(canvas.width/2 - w, canvas.height/2 + arrows_y);
+				lineTo(canvas.width/2 - w + w/12, canvas.height/2 - w/12 + arrows_y);
+				moveTo(canvas.width/2 - w, canvas.height/2 + arrows_y);
+				lineTo(canvas.width/2 - w + w/12, canvas.height/2 + w/12 + arrows_y);
+				stroke();
+			}
+		}
 
 		{
 			var p = canvas.height/6*5;
@@ -91,7 +137,8 @@ function update(t) {
 					lanes_2_y = -canvas.height;
 					player_pos = 1;
 					lanes_1 = [[0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0]];
-					lanes_2 = [[0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0]];
+					randomize_lanes(lanes_2);
+					score = 0;
 				}
 			} else {
 				power = 100;
@@ -102,6 +149,17 @@ function update(t) {
 	}
 
 	window.requestAnimationFrame(update);
+}
+
+function resize() {
+	if(canvas) {
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+
+		if(state == 0) {
+			lanes_2_y = -canvas.height;
+		}
+	}
 }
 
 function draw_lanes(lanes, w, h, a) {
