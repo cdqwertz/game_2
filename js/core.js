@@ -67,8 +67,8 @@ function update(t) {
 		var h = (canvas.height/lanes_1[0].length)
 
 		//move lanes
-		lanes_1_y += time.delta * 0.3 * h * 0.005;
-		lanes_2_y += time.delta * 0.3 * h * 0.005;
+		lanes_1_y += time.delta * 0.3;
+		lanes_2_y += time.delta * 0.3;
 
 		//teleport lanes
 		if(lanes_1_y > canvas.height) {
