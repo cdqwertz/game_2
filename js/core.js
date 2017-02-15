@@ -31,6 +31,7 @@ function load() {
 	canvas.onmousedown = function(event) {
 		if(state == 0) {
 			state = 1;
+			score = 0;
 		} else {
 			if(event.pageX > canvas.width/2) {
 				move_right();
@@ -66,8 +67,8 @@ function update(t) {
 		var h = (canvas.height/lanes_1[0].length)
 
 		//move lanes
-		lanes_1_y += time.delta * 0.3;
-		lanes_2_y += time.delta * 0.3;
+		lanes_1_y += time.delta * 0.3 * h * 0.005;
+		lanes_2_y += time.delta * 0.3 * h * 0.005;
 
 		//teleport lanes
 		if(lanes_1_y > canvas.height) {
@@ -125,6 +126,9 @@ function update(t) {
 			}
 		}
 
+		var r = Math.min(w/4, h/4);
+		draw_pie_chart(r + 30, r+30, r, 2);
+
 		{
 			var p = canvas.height/6*5;
 			var line = check_line(lanes_1[player_pos], lanes_1_y, h, p, 30) || check_line(lanes_2[player_pos], lanes_2_y, h, p, 30);
@@ -138,17 +142,53 @@ function update(t) {
 					player_pos = 1;
 					lanes_1 = [[0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0]];
 					randomize_lanes(lanes_2);
-					score = 0;
 				}
 			} else {
 				power = 100;
 			}
 		}
 	} else if (state == 0) {
-
+		draw_pie_chart(canvas.width/2, canvas.height/2, Math.min((canvas.width/4), (canvas.height/4)))
 	}
 
 	window.requestAnimationFrame(update);
+}
+
+function draw_pie_chart(x, y, r, w) {
+	w = w || 6;
+	var rotation = score*0.0001;
+	with(ctx) {
+		strokeStyle = "#444"
+		lineWidth = w;
+		lineCap = "round";
+
+		fillStyle = "#ddd"
+
+		beginPath();
+		moveTo(x, y);
+		arc(x, y, r, 0, Math.PI*2);
+		lineTo(x, y);
+		stroke();
+		fill();
+
+		fillStyle = "#d5d5d5"
+
+		beginPath();
+		moveTo(x, y);
+		arc(x, y, r, 4, 0);
+		fill();
+
+		if(score > 0) {
+			fillStyle = "#3c3"
+
+			beginPath();
+			moveTo(x, y);
+			arc(x, y, r, 0, rotation);
+			lineTo(x, y);
+			stroke();
+			fill();
+		}
+	}
 }
 
 function resize() {
@@ -245,6 +285,7 @@ function move_right() {
 document.onkeydown = function(event) {
 	if(state == 0) {
 		state = 1;
+		score = 0;
 	} else {
 		if(event.keyCode == 37) {
 			move_left();
