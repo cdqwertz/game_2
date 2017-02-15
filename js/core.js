@@ -179,11 +179,21 @@ function draw_pie_chart(x, y, r, w) {
 		fill();
 
 		if(score > 0) {
-			fillStyle = "#3c3"
+			if(Math.PI*8 < rotation) {
+				fillStyle = "#cc3";
+			} else if(Math.PI*6 < rotation) {
+				fillStyle = "#c33";
+			} else if(Math.PI*4 < rotation) {
+				fillStyle = "#3cc";
+			} else if(Math.PI*2 < rotation) {
+				fillStyle = "#33c";
+			} else {
+				fillStyle = "#3c3";
+			}
 
 			beginPath();
 			moveTo(x, y);
-			arc(x, y, r, 0, rotation);
+			arc(x, y, r, 0, rotation%(Math.PI*2));
 			lineTo(x, y);
 			stroke();
 			fill();
