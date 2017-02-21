@@ -156,7 +156,7 @@ function update(t) {
 
 function draw_pie_chart(x, y, r, w) {
 	w = w || 6;
-	var rotation = score*0.0001;
+	var rotation = score*0.0001 * 2;
 	with(ctx) {
 		strokeStyle = "#444"
 		lineWidth = w;
@@ -171,15 +171,21 @@ function draw_pie_chart(x, y, r, w) {
 		stroke();
 		fill();
 
-		fillStyle = "#d5d5d5"
+		if(Math.PI*2 < rotation && !(Math.PI*4 < rotation)) {
+			fillStyle = "#d5d5d5"
 
-		beginPath();
-		moveTo(x, y);
-		arc(x, y, r, 4, 0);
-		fill();
+			beginPath();
+			moveTo(x, y);
+			arc(x, y, r, 4, 0);
+			fill();
+		}
 
 		if(score > 0) {
-			if(Math.PI*8 < rotation) {
+			if(Math.PI*12 < rotation) {
+				fillStyle = "#777";
+			} else if(Math.PI*10 < rotation) {
+				fillStyle = "#c3c";
+			} else if(Math.PI*8 < rotation) {
 				fillStyle = "#cc3";
 			} else if(Math.PI*6 < rotation) {
 				fillStyle = "#c33";
